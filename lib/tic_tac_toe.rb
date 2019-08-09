@@ -8,96 +8,104 @@ class TicTacToe
     [0,4,8],
     [2,4,6]
   ]
-  def display_board
+  def initialize
+    @board = [" ", " ", " ", " ", " ", " ", " ", " ", " "]
+end
+
+ def display_board
     puts " #{@board[0]} | #{@board[1]} | #{@board[2]} "
     puts "-----------"
     puts " #{@board[3]} | #{@board[4]} | #{@board[5]} "
     puts "-----------"
     puts " #{@board[6]} | #{@board[7]} | #{@board[8]} "
-  end
+end
 
-   def input_to_index(user_input)
-    user_input.to_i - 1
-  end
+ def input_to_index(input)
+    return input.to_i - 1
+end
 
-   def move(index, token)
-    @board[index] = token
-  end
+ def move(index, value)
+    @board[index] = value
+end
 
-   def position_taken?(index)
-    @board[index] != " "
-  end
+ def position_taken?(index)
+    !(@board[index] == " " || @board[index] == "" || @board[index] == nil)
+end
 
-   def valid_move?(index)
+ def valid_move?(index)
     index.between?(0,8) && !position_taken?(index)
-  end
+end
 
-   def turn_count
-    turns = 0
-    @board.each do |token|
-      if token == "X" || token == "O"
-        turns += 1
-      end
-    end
-    turns
-  end
+ def turn
+    puts "Please enter 1-9:"
+    input = gets.strip
+    index = input_to_index(input)
 
-   def current_player
-    if turn_count % 2 == 0
-      "X"
-    else
-      "O"
+     until valid_move?(index)
+        puts "Please enter 1-9:"
+        input = gets.strip
+        index = input_to_index(input)
     end
-  end
 
-   def turn
-    puts "Please enter a number (1-9):"
-    user_input = gets.strip
-    index = input_to_index(user_input)
-    if valid_move?(index)
-      token = current_player
-      move(index, token)
-    else
-      turn
-    end
-    draw?
+     move(index, current_player)
     display_board
-  end
+end
 
-   def won?
-    WIN_COMBINATIONS.detect do |combo|
-      @board[combo[0]] == @board[combo[1]] &&
-      @board[combo[1]] == @board[combo[2]] &&
-      position_taken?(combo[0])
+ def turn_count
+    counter = 0
+
+     @board.each do |position|
+        position == "X" || position == "O" ? counter += 1 : nil
     end
-  end
 
-   def full?
-    @board.all?{|token| token == "X" || token == "O"}
-  end
+     counter
+end
 
-   def draw?
-    full? && !won?
-  end
+ def current_player
+    turn_count % 2 == 0 ? "X" : "O"
+end
 
-   def over?
-    won? || draw?
-  end
-
-   def winner
-    if combo = won?
-      @board[combo.first]
+ def won?
+    WIN_COMBINATIONS.each do |combination|
+        if(combination.all? {|i| @board[i] == "X"} || combination.all? {|i| @board[i] == "O"})
+            return combination
+        end
     end
-  end
 
-   def play
-     while !over?
-       turn
-     end
+     false
+end
+
+ def full?
+    @board.none? {|position| position == " "}
+end
+
+ def draw?
+    !won? && full?
+end
+
+ def over?
+    draw? || won?
+end
+
+ def winner
+    result = won?
+
+     if result
+        @board[result[0]]
+    else
+        nil
+    end
+end
+
+ def play
+    until over?
+        turn
+    end
+
      if won?
-       puts "Congratulations #{winner}!"
-     elsif draw?
-       puts "Cat's Game!"
-     end
-   end
- end
+        puts "Congratulations #{winner}!"
+    else
+        puts "Cat's Game!"
+    end
+  end
+end 
