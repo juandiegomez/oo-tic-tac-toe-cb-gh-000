@@ -71,8 +71,7 @@ end
             return combination
         end
     end
-
-     false
+    false
 end
 
  def full?
@@ -89,7 +88,6 @@ end
 
  def winner
     result = won?
-
      if result
         @board[result[0]]
     else
@@ -101,7 +99,6 @@ end
     until over?
         turn
     end
-
      if won?
         puts "Congratulations #{winner}!"
     else
